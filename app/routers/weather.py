@@ -1,52 +1,85 @@
-import json
-from fastapi import APIRouter
+from typing import Union
+from fastapi import APIRouter, Depends
+from fastapi.encoders import jsonable_encoder
 from core.models import Weather
 from interfaces.schemas import WeatherList
 from core.services import WeatherService
 from core.config import db
-from bson import json_util
+from fastapi.responses import JSONResponse
 
 
 router = APIRouter(
     prefix="/weather",
     tags=["weather"],
 )
-    
 
-@router.get('/test')
-async def test():
-    return await db.manager.list_collection_names()
+async def get_db():
+    try:
+        if not hasattr(db, 'self.manager'):
+            await db.connect()
+        s = await db.client.start_session()
+        yield db
+    finally:
+        await s.end_session()
 
 @router.get("/last-hour")
-async def get_last_hour():
+async def get_last_hour(db = Depends(get_db)):
     service = WeatherService(db)
-    temperature = await service.get_last_hour_temperature()
+    temperature: Union[int, float, None] = await service.get_last_hour_temperature()
     if not temperature:
-        return {'message': 'weather temperature on the last hour is not found'}
-    return {'message': f'weather temperature on the last hour is {temperature} C'}
+        return JSONResponse(
+            content={'message': 'weather temperature on the last hour is not found'},
+            status_code=404
+            )
+    return JSONResponse(
+        content={'message': f'weather temperature on the last hour is {temperature} C'}, 
+        status_code=200
+        )
 
 @router.get("/current")
-async def get_current():
+async def get_current(db = Depends(get_db)):
     service = WeatherService(db)
-    temperature = await service.get_current_temperature()
+    temperature: Union[int, float, None] = await service.get_current_temperature()
     if not temperature:
-        return {'message': 'current weather temperature is not found'}
-    return {'message': f'current weather temperature is {temperature} C'}
+        return JSONResponse(
+            content={'message': 'current weather temperature is not found'}, 
+            status_code=404
+            )
+    return JSONResponse(
+        content={'message': f'current weather temperature is {temperature} C'},
+        status_code=200)
 
 @router.get('/historical')
-async def get_historical():
+async def get_historical(db = Depends(get_db)):
     service = WeatherService(db)
-    hist: list[Weather] =  await service.get_historical_data()
-    return WeatherList(list=hist)
+    hist: Union[list[Weather], list[None]]  =  await service.get_historical_data()
+    if not hist:
+        return JSONResponse(content={}, status_code=404) 
+    return JSONResponse(content=jsonable_encoder(WeatherList(list=hist)), status_code=200) 
 
 @router.get('/historical/max')
-async def get_historical_max():
+async def get_historical_max(db = Depends(get_db)):
     service = WeatherService(db)
-    weather = await service.get_historical_data_max()
-    return {'message': f'max temperature for last 24 hour is {weather.temperature} at {weather.datetime}'}
+    weather: Union[Weather, None] = await service.get_historical_data_max()
+    if not weather:
+        return JSONResponse(
+        content={'message': f'max temperature not found'},
+        status_code=404
+        )
+    return JSONResponse(
+        content={'message': f'max temperature for last 24 hour is {weather.temperature} at {weather.datetime}'},
+        status_code=200
+        )
 
 @router.get('/historical/min')
-async def historical_min():
+async def historical_min(db = Depends(get_db)):
     service = WeatherService(db)
-    weather = await service.get_historical_data_min()
-    return {'message': f'min temperature for last 24 hour is {weather.temperature} at {weather.datetime}'}
+    weather: Union[Weather, None] = await service.get_historical_data_min()
+    if not weather:
+        return JSONResponse(
+        content={'message': f'min temperature not found'},
+        status_code=404
+        )
+    return JSONResponse(
+        content={'message': f'min temperature for last 24 hour is {weather.temperature} at {weather.datetime}'},
+        status_code=200)

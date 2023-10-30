@@ -9,13 +9,6 @@ from routers.weather import router as weather
 from core.config import db, scheduler
 
 
-async def test_job():
-    while True:
-        print('start job')
-        await asyncio.sleep(10) 
-        print('end job')
-
-
 load_dotenv()
 
 @asynccontextmanager

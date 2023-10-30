@@ -1,7 +1,6 @@
 from datetime import datetime
 from pydantic import BaseModel, Field, ConfigDict
 from typing import Union
-from bson import ObjectId
 from bson.objectid import ObjectId as BsonObjectId
 
 
@@ -28,7 +27,7 @@ class Weather(BaseModel):
 
 
     @classmethod
-    async def serialize_external_data(cls, data):
+    async def deserialize_external_data(cls, data):
         return Weather(
             datetime=data['LocalObservationDateTime'],
             epochtime=data['EpochTime'],

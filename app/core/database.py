@@ -23,10 +23,9 @@ class MongoDatabase(Database):
                 username=self.username,
                 password=self.password
             )
-            print(await self.client.server_info())
             self.manager = self.client[self.db_name]
         except Exception as e:
-            print(f'Could not connect to mongo: {e}')
+            logging.info(f'Could not connect to mongo: {e}')
             raise
 
     async def close(self) -> None:

@@ -15,7 +15,3 @@ class WeatherRepositoryInterface(ABC):
     @abstractmethod
     async def get_historical(self, datetime: datetime) -> list[Weather]:
         pass
-
-    @abstractmethod
-    async def get_by_time(self, datetime: datetime) -> Weather:
-        pass

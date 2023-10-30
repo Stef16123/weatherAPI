@@ -1,5 +1,4 @@
 import os
-from motor.motor_asyncio import AsyncIOMotorClient
 import aioschedule as schedule
 from core.scheduler import Sсheduler
 from core.tasks import Task
@@ -11,6 +10,7 @@ MONGO_PORT= os.environ['MONGO_PORT']
 MONGO_USER = os.environ['MONGO_INITDB_ROOT_USERNAME']
 MONGO_PASS = os.environ['MONGO_INITDB_ROOT_PASSWORD']
 MONGO_DB_NAME = os.environ['MONGO_INITDB_DATABASE']
+
 MONGO_DB_URL = f'mongodb://mongodb:{MONGO_PORT}'
 
 
