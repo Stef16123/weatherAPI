@@ -14,7 +14,7 @@ load_dotenv()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logging.basicConfig(level=logging.INFO)
-    await db.connect()
+    await db.set_db()
     loop = asyncio.get_event_loop()
     loop.create_task(scheduler.run())
     yield

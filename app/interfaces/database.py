@@ -16,7 +16,7 @@ class Database(ABC):
         self.password = password
 
     @abstractmethod
-    async def connect(self) -> None:
+    async def set_db(self) -> None:
         pass
 
     @abstractmethod

@@ -16,7 +16,7 @@ router = APIRouter(
 async def get_db():
     try:
         if not hasattr(db, 'self.manager'):
-            await db.connect()
+            await db.set_db()
         s = await db.client.start_session()
         yield db
     finally:

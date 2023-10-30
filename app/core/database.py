@@ -16,7 +16,7 @@ class MongoDatabase(Database):
         self.username = username
         self.password = password
 
-    async def connect(self):
+    async def set_db(self):
         try:
             self.client = AsyncIOMotorClient(
                 self.db_url,
