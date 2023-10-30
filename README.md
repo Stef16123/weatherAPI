@@ -1,16 +1,22 @@
 # weatherAPI
-API для статистики по погод
+API для статистики по погоде с использованием внешнего api. 
 
-## WIP:
+При запуске сервера, так же запускается шедулер, который раз в час получает данные о текущей погоде в Москве со стороннего сервера ([AccuWeather](https://www.accuweather.com/)) и сохраняет в БД. 
 
-`/weather/current` - Текущая температура
 
-`/weather/historical` - Почасовая температура за последние 24 часа
+## Стэк:
+- FastApi
+- mongodb (motor)
+- docker
 
-`/weather/historical/max` - Максимальная темперетура за 24 часа
 
-`/weather/historical/min` - Минимальная темперетура за 24 часа
+## Api:
 
-`/weather/historical/avg` - Средняя темперетура за 24 часа
 
-`/weather/by_time` - Найти температуру ближайшую к переданному timestamp
+`/weather/current` - Текущая температура (Запрос к AccuWeather)
+
+`/weather/historical` - Почасовая температура за последние 24 часа 
+
+`/weather/historical/max` - Максимальная температура за 24 часа
+
+`/weather/historical/min` - Минимальная температура за 24 часа
